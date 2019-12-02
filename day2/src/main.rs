@@ -40,15 +40,34 @@ fn execute(input: &mut Vec<usize>) {
     }
 }
 
-fn main() {
-    let mut values: Vec<usize> = get_values("input.txt");
+fn test_noun_and_verb(filename: &str, noun: usize, verb: usize) -> bool {
+    // Read the file
+    let mut values: Vec<usize> = get_values(filename);
 
-    values[1] = 12;
-    values[2] = 2;
+    values[1] = noun;
+    values[2] = verb;
 
     execute(&mut values);
 
-    dbg!(values[0]);
+    values[0] == 19690720
+}
+
+fn main() {
+    let filename: &str = "input.txt";
+
+    let mut noun: usize = 0;
+    let mut verb: usize = 0;
+
+    while !test_noun_and_verb(filename, noun, verb) {
+        verb += 1;
+
+        if verb == 100 {
+            noun += 1;
+            verb = 0;
+        }
+    }
+
+    dbg!(noun * 100 + verb);
 }
 
 #[test]
