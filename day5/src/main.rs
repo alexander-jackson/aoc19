@@ -35,61 +35,79 @@ fn split_opcode(opcode: i32) -> Op {
     }
 }
 
+fn add_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
+    let uindex: usize = *index as usize;
+
+    // Add instruction
+    let c: i32 = input[uindex + 1];
+    let b: i32 = input[uindex + 2];
+    let dest: i32 = input[uindex + 3];
+
+    if op.a == 0 {
+        // Positional
+        input[dest as usize] =
+            if op.c == 0 { input[c as usize] } else { c }
+            +
+            if op.b == 0 { input[b as usize] } else { b }
+    } else {
+        // Immediate addressing
+    }
+
+    *index += 4;
+}
+
+fn multiply_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
+    let uindex: usize = *index as usize;
+
+    // Multiply instruction
+    let c: i32 = input[uindex + 1];
+    let b: i32 = input[uindex + 2];
+    let dest: i32 = input[uindex + 3];
+
+    if op.a == 0 {
+        // Positional
+        input[dest as usize] =
+            if op.c == 0 { input[c as usize] } else { c }
+            *
+            if op.b == 0 { input[b as usize] } else { b }
+    } else {
+        // Immediate addressing
+    }
+
+    *index += 4;
+}
+
+fn read_op(input: &mut Vec<i32>, index: &mut i32) {
+    let uindex: usize = *index as usize;
+
+    let mut line: String = String::new();
+    io::stdin().read_line(&mut line).unwrap();
+    let dest: i32 = input[uindex + 1];
+
+    input[dest as usize] = line.trim().parse().unwrap();
+
+    *index += 2;
+}
+
+fn output_op(input: &mut Vec<i32>, index: &mut i32) {
+    let uindex: usize = *index as usize;
+
+    let value: i32 = input[uindex + 1];
+    println!("Output instruction: {}", input[value as usize]);
+
+    *index += 2;
+}
+
 fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
     // Split the opcode up
     let op: Op = split_opcode(opcode);
 
-    let uindex: usize = *index as usize;
-
-    if op.d == 1 {
-        // Add instruction
-        let c: i32 = input[uindex + 1];
-        let b: i32 = input[uindex + 2];
-        let dest: i32 = input[uindex + 3];
-
-        if op.a == 0 {
-            // Positional
-            input[dest as usize] =
-                if op.c == 0 { input[c as usize] } else { c }
-                +
-                if op.b == 0 { input[b as usize] } else { b }
-        } else {
-            // Immediate addressing
-        }
-
-        *index += 4;
-    } else if op.d == 2 {
-        // Multiply instruction
-        let c: i32 = input[uindex + 1];
-        let b: i32 = input[uindex + 2];
-        let dest: i32 = input[uindex + 3];
-
-        if op.a == 0 {
-            // Positional
-            input[dest as usize] =
-                if op.c == 0 { input[c as usize] } else { c }
-                *
-                if op.b == 0 { input[b as usize] } else { b }
-        } else {
-            // Immediate addressing
-        }
-
-        *index += 4;
-    } else if op.d == 3 {
-        let mut line: String = String::new();
-        io::stdin().read_line(&mut line).unwrap();
-        let dest: i32 = input[uindex + 1];
-
-        input[dest as usize] = line.trim().parse().unwrap();
-
-        *index += 2;
-    } else if op.d == 4 {
-        let value: i32 = input[uindex + 1];
-        println!("Output instruction: {}", input[value as usize]);
-
-        *index += 2;
-    } else {
-        panic!("Invalid opcode");
+    match op.d {
+        1 => add_op(input, index, op),
+        2 => multiply_op(input, index, op),
+        3 => read_op(input, index),
+        4 => output_op(input, index),
+        _ => panic!("Invalid opcode"),
     }
 }
 
