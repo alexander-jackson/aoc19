@@ -1,6 +1,7 @@
 use std::fs;
+use std::io;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct Op {
     a: i8,
     b: i8,
@@ -46,10 +47,10 @@ fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
 
         if op.a == 0 {
             // Positional
-            input[dest as usize] = 
-                if op.b == 0 { input[b as usize] } else { b }
-                +
+            input[dest as usize] =
                 if op.c == 0 { input[c as usize] } else { c }
+                +
+                if op.b == 0 { input[b as usize] } else { b }
         } else {
             // Immediate addressing
         }
@@ -63,15 +64,30 @@ fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
 
         if op.a == 0 {
             // Positional
-            input[dest as usize] = 
-                if op.b == 0 { input[b as usize] } else { b }
-                *
+            input[dest as usize] =
                 if op.c == 0 { input[c as usize] } else { c }
+                *
+                if op.b == 0 { input[b as usize] } else { b }
         } else {
             // Immediate addressing
         }
 
         *index += 4;
+    } else if op.d == 3 {
+        let mut line: String = String::new();
+        io::stdin().read_line(&mut line).unwrap();
+        let dest: i32 = input[*index as usize + 1];
+
+        input[dest as usize] = line.trim().parse().unwrap();
+
+        *index += 2;
+    } else if op.d == 4 {
+        let value: i32 = input[*index as usize + 1];
+        println!("Output instruction: {}", input[value as usize]);
+
+        *index += 2;
+    } else {
+        panic!("Invalid opcode");
     }
 }
 
@@ -90,34 +106,12 @@ fn execute(input: &mut Vec<i32>) {
     }
 }
 
-fn test_noun_and_verb(filename: &str, noun: i32, verb: i32) -> bool {
-    // Read the file
-    let mut values: Vec<i32> = get_values(filename);
-
-    values[1] = noun;
-    values[2] = verb;
-
-    execute(&mut values);
-
-    values[0] == 19690720
-}
-
 fn main() {
     let filename: &str = "input.txt";
 
-    let mut noun: i32 = 0;
-    let mut verb: i32 = 0;
+    let mut values: Vec<i32> = get_values(filename);
 
-    while !test_noun_and_verb(filename, noun, verb) {
-        verb += 1;
-
-        if verb == 100 {
-            noun += 1;
-            verb = 0;
-        }
-    }
-
-    dbg!(noun * 100 + verb);
+    execute(&mut values);
 }
 
 #[test]
@@ -154,4 +148,27 @@ fn fourth_test() {
     execute(&mut values);
 
     assert_eq!(values, format_input("30,1,1,4,2,5,6,0,99"));
+}
+
+#[test]
+fn split_opcode_test() {
+    assert_eq!(split_opcode(1002), Op { a: 0, b: 1, c: 0, d: 2 });
+}
+
+#[test]
+fn multiplication_test() {
+    let mut values: Vec<i32> = format_input("1002,4,3,4,33");
+
+    execute(&mut values);
+
+    assert_eq!(values, format_input("1002,4,3,4,99"));
+}
+
+#[test]
+fn addition_test() {
+    let mut values: Vec<i32> = format_input("1001,4,66,4,33");
+
+    execute(&mut values);
+
+    assert_eq!(values, format_input("1001,4,66,4,99"));
 }
