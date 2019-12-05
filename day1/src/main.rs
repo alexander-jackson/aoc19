@@ -43,9 +43,7 @@ fn main() {
 #[test]
 fn get_fuel_requirement_test() {
     let masses: Vec<i64> = vec![14, 1969, 100756];
-    let reqs: Vec<i64> = masses.iter()
-        .map(|v| get_fuel_requirement(*v))
-        .collect();
+    let reqs: Vec<i64> = masses.iter().map(|v| get_fuel_requirement(*v)).collect();
     let expected: Vec<i64> = vec![2, 966, 50346];
 
     assert_eq!(reqs, expected);
