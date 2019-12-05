@@ -98,6 +98,62 @@ fn output_op(input: &mut Vec<i32>, index: &mut i32) {
     *index += 2;
 }
 
+fn jump_if_true_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
+    let uindex: usize = *index as usize;
+
+    let mut cond: i32 = input[uindex + 1];
+    let mut ptr: i32 = input[uindex + 2];
+
+    cond = if op.c == 0 { input[cond as usize] } else { cond };
+    ptr = if op.b == 0 { input[ptr as usize] } else { ptr };
+
+    *index = if cond != 0 { ptr } else { *index + 3 };
+}
+
+fn jump_if_false_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
+    let uindex: usize = *index as usize;
+
+    let mut cond: i32 = input[uindex + 1];
+    let mut ptr: i32 = input[uindex + 2];
+
+    cond = if op.c == 0 { input[cond as usize] } else { cond };
+    ptr = if op.b == 0 { input[ptr as usize] } else { ptr };
+
+    *index = if cond == 0 { ptr } else { *index + 3 };
+}
+
+fn less_than_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
+    let uindex: usize = *index as usize;
+
+    let mut first: i32 = input[uindex + 1];
+    let mut second: i32 = input[uindex + 2];
+    let mut third: i32 = input[uindex + 3];
+
+    first = if op.c == 0 { input[first as usize] } else { first };
+    second = if op.b == 0 { input[second as usize] } else { second };
+    third = if op.a == 0 { input[third as usize] } else { third };
+
+    input[third as usize] = if first < second { 1 } else { 0 };
+
+    *index += 4;
+}
+
+fn equals_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
+    let uindex: usize = *index as usize;
+
+    let mut first: i32 = input[uindex + 1];
+    let mut second: i32 = input[uindex + 2];
+    let mut third: i32 = input[uindex + 3];
+
+    first = if op.c == 0 { input[first as usize] } else { first };
+    second = if op.b == 0 { input[second as usize] } else { second };
+    third = if op.a == 0 { input[third as usize] } else { third };
+
+    input[third as usize] = if first == second { 1 } else { 0 };
+
+    *index += 4;
+}
+
 fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
     // Split the opcode up
     let op: Op = split_opcode(opcode);
@@ -107,6 +163,10 @@ fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
         2 => multiply_op(input, index, op),
         3 => read_op(input, index),
         4 => output_op(input, index),
+        5 => jump_if_true_op(input, index, op),
+        6 => jump_if_false_op(input, index, op),
+        7 => less_than_op(input, index, op),
+        8 => equals_op(input, index, op),
         _ => panic!("Invalid opcode"),
     }
 }
