@@ -128,11 +128,11 @@ fn less_than_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
 
     let mut first: i32 = input[uindex + 1];
     let mut second: i32 = input[uindex + 2];
-    let mut third: i32 = input[uindex + 3];
+    let third: i32 = input[uindex + 3];
 
+    // Convert first and second if needed
     first = if op.c == 0 { input[first as usize] } else { first };
     second = if op.b == 0 { input[second as usize] } else { second };
-    third = if op.a == 0 { input[third as usize] } else { third };
 
     input[third as usize] = if first < second { 1 } else { 0 };
 
@@ -144,11 +144,11 @@ fn equals_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
 
     let mut first: i32 = input[uindex + 1];
     let mut second: i32 = input[uindex + 2];
-    let mut third: i32 = input[uindex + 3];
+    let third: i32 = input[uindex + 3];
 
+    // Convert first and second if needed
     first = if op.c == 0 { input[first as usize] } else { first };
     second = if op.b == 0 { input[second as usize] } else { second };
-    third = if op.a == 0 { input[third as usize] } else { third };
 
     input[third as usize] = if first == second { 1 } else { 0 };
 
@@ -158,8 +158,6 @@ fn equals_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
 fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
     // Split the opcode up
     let op: Op = split_opcode(opcode);
-
-    println!("Performing: {:?} at index {}", op, index);
 
     match op.d {
         1 => add_op(input, index, op),
@@ -178,10 +176,6 @@ fn execute(input: &mut Vec<i32>) {
     let mut index: i32 = 0;
 
     loop {
-        if index as usize >= input.len() {
-            break;
-        }
-
         // Get opcode, a, b and dest
         let opcode: i32 = input[index as usize];
 
@@ -195,13 +189,9 @@ fn execute(input: &mut Vec<i32>) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-
     let filename: &str = if args.len() > 1 { &args[1] } else { "input.txt" };
 
-    dbg!(&filename);
-
     let mut values: Vec<i32> = get_values(filename);
-
     execute(&mut values);
 }
 
