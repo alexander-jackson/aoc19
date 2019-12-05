@@ -24,14 +24,18 @@ fn execute(input: &mut Vec<i32>) {
             break;
         }
 
-        let a: i32 = input[index as usize + 1];
-        let b: i32 = input[index as usize + 2];
-        let dest: i32 = input[index as usize + 3];
-
         if opcode == 1 {
+            let a: i32 = input[index as usize + 1];
+            let b: i32 = input[index as usize + 2];
+            let dest: i32 = input[index as usize + 3];
+
             input[dest as usize] = input[a as usize] + input[b as usize];
             index += 4;
         } else if opcode == 2 {
+            let a: i32 = input[index as usize + 1];
+            let b: i32 = input[index as usize + 2];
+            let dest: i32 = input[index as usize + 3];
+
             input[dest as usize] = input[a as usize] * input[b as usize];
             index += 4;
         } else {
