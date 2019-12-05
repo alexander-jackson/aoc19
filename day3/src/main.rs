@@ -1,6 +1,6 @@
-use std::fs;
-use std::env;
 use std::collections::HashMap;
+use std::env;
+use std::fs;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 struct Coordinate {
@@ -15,28 +15,56 @@ fn simulate(curr: Coordinate, op: (char, i32), len: &mut i32) -> Vec<(Coordinate
     match dir {
         'U' => {
             for i in 1..=dist {
-                coords.push((Coordinate { x: curr.x, y: curr.y + i }, *len));
+                coords.push((
+                    Coordinate {
+                        x: curr.x,
+                        y: curr.y + i,
+                    },
+                    *len,
+                ));
+
                 *len += 1;
             }
-        },
+        }
         'D' => {
             for i in 1..=dist {
-                coords.push((Coordinate { x: curr.x, y: curr.y - i }, *len));
+                coords.push((
+                    Coordinate {
+                        x: curr.x,
+                        y: curr.y - i,
+                    },
+                    *len,
+                ));
+
                 *len += 1;
             }
-        },
+        }
         'L' => {
             for i in 1..=dist {
-                coords.push((Coordinate { x: curr.x - i, y: curr.y }, *len));
+                coords.push((
+                    Coordinate {
+                        x: curr.x - i,
+                        y: curr.y,
+                    },
+                    *len,
+                ));
+
                 *len += 1;
             }
-        },
+        }
         'R' => {
             for i in 1..=dist {
-                coords.push((Coordinate { x: curr.x + i, y: curr.y }, *len));
+                coords.push((
+                    Coordinate {
+                        x: curr.x + i,
+                        y: curr.y,
+                    },
+                    *len,
+                ));
+
                 *len += 1;
             }
-        },
+        }
         _ => panic!("Unexpected match"),
     }
 
@@ -45,10 +73,14 @@ fn simulate(curr: Coordinate, op: (char, i32), len: &mut i32) -> Vec<(Coordinate
 
 fn get_wire(line: &str) -> HashMap<Coordinate, i32> {
     // Split the line and get (char, usize)
-    let ops: Vec<(char, i32)> = line.split(',')
+    let ops: Vec<(char, i32)> = line
+        .split(',')
         .map(|x| {
             let mut chars = x.chars();
-            (chars.next().unwrap(), chars.collect::<String>().parse().unwrap())
+            (
+                chars.next().unwrap(),
+                chars.collect::<String>().parse().unwrap(),
+            )
         })
         .collect();
 
