@@ -38,7 +38,15 @@ fn fourth_test() {
 
 #[test]
 fn split_opcode_test() {
-    assert_eq!(split_opcode(1002), Op { a: 0, b: 1, c: 0, d: 2 });
+    assert_eq!(
+        split_opcode(1002),
+        Op {
+            a: 0,
+            b: 1,
+            c: 0,
+            d: 2
+        }
+    );
 }
 
 #[test]

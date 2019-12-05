@@ -1,6 +1,6 @@
-use std::io;
-use std::fs;
 use std::env;
+use std::fs;
+use std::io;
 
 #[derive(Debug, PartialEq)]
 struct Op {
@@ -44,15 +44,8 @@ fn add_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
     let b: i32 = input[uindex + 2];
     let dest: i32 = input[uindex + 3];
 
-    if op.a == 0 {
-        // Positional
-        input[dest as usize] =
-            if op.c == 0 { input[c as usize] } else { c }
-            +
-            if op.b == 0 { input[b as usize] } else { b }
-    } else {
-        // Immediate addressing
-    }
+    input[dest as usize] = if op.c == 0 { input[c as usize] } else { c }
+        + if op.b == 0 { input[b as usize] } else { b };
 
     *index += 4;
 }
@@ -65,15 +58,8 @@ fn multiply_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
     let b: i32 = input[uindex + 2];
     let dest: i32 = input[uindex + 3];
 
-    if op.a == 0 {
-        // Positional
-        input[dest as usize] =
-            if op.c == 0 { input[c as usize] } else { c }
-            *
-            if op.b == 0 { input[b as usize] } else { b }
-    } else {
-        // Immediate addressing
-    }
+    input[dest as usize] = if op.c == 0 { input[c as usize] } else { c }
+        * if op.b == 0 { input[b as usize] } else { b };
 
     *index += 4;
 }
@@ -105,7 +91,12 @@ fn jump_if_true_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
     let mut cond: i32 = input[uindex + 1];
     let mut ptr: i32 = input[uindex + 2];
 
-    cond = if op.c == 0 { input[cond as usize] } else { cond };
+    cond = if op.c == 0 {
+        input[cond as usize]
+    } else {
+        cond
+    };
+
     ptr = if op.b == 0 { input[ptr as usize] } else { ptr };
 
     *index = if cond != 0 { ptr } else { *index + 3 };
@@ -117,7 +108,12 @@ fn jump_if_false_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
     let mut cond: i32 = input[uindex + 1];
     let mut ptr: i32 = input[uindex + 2];
 
-    cond = if op.c == 0 { input[cond as usize] } else { cond };
+    cond = if op.c == 0 {
+        input[cond as usize]
+    } else {
+        cond
+    };
+
     ptr = if op.b == 0 { input[ptr as usize] } else { ptr };
 
     *index = if cond == 0 { ptr } else { *index + 3 };
@@ -131,8 +127,17 @@ fn less_than_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
     let third: i32 = input[uindex + 3];
 
     // Convert first and second if needed
-    first = if op.c == 0 { input[first as usize] } else { first };
-    second = if op.b == 0 { input[second as usize] } else { second };
+    first = if op.c == 0 {
+        input[first as usize]
+    } else {
+        first
+    };
+
+    second = if op.b == 0 {
+        input[second as usize]
+    } else {
+        second
+    };
 
     input[third as usize] = if first < second { 1 } else { 0 };
 
@@ -147,8 +152,17 @@ fn equals_op(input: &mut Vec<i32>, index: &mut i32, op: Op) {
     let third: i32 = input[uindex + 3];
 
     // Convert first and second if needed
-    first = if op.c == 0 { input[first as usize] } else { first };
-    second = if op.b == 0 { input[second as usize] } else { second };
+    first = if op.c == 0 {
+        input[first as usize]
+    } else {
+        first
+    };
+
+    second = if op.b == 0 {
+        input[second as usize]
+    } else {
+        second
+    };
 
     input[third as usize] = if first == second { 1 } else { 0 };
 
@@ -184,7 +198,11 @@ fn execute(input: &mut Vec<i32>) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let filename: &str = if args.len() > 1 { &args[1] } else { "input.txt" };
+    let filename: &str = if args.len() > 1 {
+        &args[1]
+    } else {
+        "input.txt"
+    };
 
     let mut values: Vec<i32> = get_values(filename);
     execute(&mut values);
