@@ -1,5 +1,13 @@
 use std::fs;
 
+#[derive(Debug)]
+struct Op {
+    a: i8,
+    b: i8,
+    c: i8,
+    d: i8,
+}
+
 fn format_input(input: &str) -> Vec<i32> {
     input
         .trim()
@@ -13,6 +21,60 @@ fn get_values(filename: &str) -> Vec<i32> {
     format_input(&fs::read_to_string(filename).expect("Failed to read the problem input"))
 }
 
+/// Splits an opcode up into an Op struct
+fn split_opcode(opcode: i32) -> Op {
+    let op_str: String = format!("{:0>5}", opcode.to_string());
+    let mut op_it = op_str.chars();
+
+    Op {
+        a: op_it.next().unwrap().to_digit(10).unwrap() as i8,
+        b: op_it.next().unwrap().to_digit(10).unwrap() as i8,
+        c: op_it.next().unwrap().to_digit(10).unwrap() as i8,
+        d: op_it.collect::<String>().parse().unwrap(),
+    }
+}
+
+fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
+    // Split the opcode up
+    let op: Op = split_opcode(opcode);
+
+    if op.d == 1 {
+        // Add instruction
+        let c: i32 = input[*index as usize + 1];
+        let b: i32 = input[*index as usize + 2];
+        let dest: i32 = input[*index as usize + 3];
+
+        if op.a == 0 {
+            // Positional
+            input[dest as usize] = 
+                if op.b == 0 { input[b as usize] } else { b }
+                +
+                if op.c == 0 { input[c as usize] } else { c }
+        } else {
+            // Immediate addressing
+        }
+
+        *index += 4;
+    } else if op.d == 2 {
+        // Multiply instruction
+        let c: i32 = input[*index as usize + 1];
+        let b: i32 = input[*index as usize + 2];
+        let dest: i32 = input[*index as usize + 3];
+
+        if op.a == 0 {
+            // Positional
+            input[dest as usize] = 
+                if op.b == 0 { input[b as usize] } else { b }
+                *
+                if op.c == 0 { input[c as usize] } else { c }
+        } else {
+            // Immediate addressing
+        }
+
+        *index += 4;
+    }
+}
+
 fn execute(input: &mut Vec<i32>) {
     let mut index: i32 = 0;
 
@@ -24,23 +86,7 @@ fn execute(input: &mut Vec<i32>) {
             break;
         }
 
-        if opcode == 1 {
-            let a: i32 = input[index as usize + 1];
-            let b: i32 = input[index as usize + 2];
-            let dest: i32 = input[index as usize + 3];
-
-            input[dest as usize] = input[a as usize] + input[b as usize];
-            index += 4;
-        } else if opcode == 2 {
-            let a: i32 = input[index as usize + 1];
-            let b: i32 = input[index as usize + 2];
-            let dest: i32 = input[index as usize + 3];
-
-            input[dest as usize] = input[a as usize] * input[b as usize];
-            index += 4;
-        } else {
-            panic!("Something went wrong");
-        }
+        perform_opcode(input, &mut index, opcode);
     }
 }
 
