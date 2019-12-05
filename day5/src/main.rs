@@ -39,11 +39,13 @@ fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
     // Split the opcode up
     let op: Op = split_opcode(opcode);
 
+    let uindex: usize = *index as usize;
+
     if op.d == 1 {
         // Add instruction
-        let c: i32 = input[*index as usize + 1];
-        let b: i32 = input[*index as usize + 2];
-        let dest: i32 = input[*index as usize + 3];
+        let c: i32 = input[uindex + 1];
+        let b: i32 = input[uindex + 2];
+        let dest: i32 = input[uindex + 3];
 
         if op.a == 0 {
             // Positional
@@ -58,9 +60,9 @@ fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
         *index += 4;
     } else if op.d == 2 {
         // Multiply instruction
-        let c: i32 = input[*index as usize + 1];
-        let b: i32 = input[*index as usize + 2];
-        let dest: i32 = input[*index as usize + 3];
+        let c: i32 = input[uindex + 1];
+        let b: i32 = input[uindex + 2];
+        let dest: i32 = input[uindex + 3];
 
         if op.a == 0 {
             // Positional
@@ -76,13 +78,13 @@ fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
     } else if op.d == 3 {
         let mut line: String = String::new();
         io::stdin().read_line(&mut line).unwrap();
-        let dest: i32 = input[*index as usize + 1];
+        let dest: i32 = input[uindex + 1];
 
         input[dest as usize] = line.trim().parse().unwrap();
 
         *index += 2;
     } else if op.d == 4 {
-        let value: i32 = input[*index as usize + 1];
+        let value: i32 = input[uindex + 1];
         println!("Output instruction: {}", input[value as usize]);
 
         *index += 2;
