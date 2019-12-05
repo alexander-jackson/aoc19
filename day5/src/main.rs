@@ -176,7 +176,6 @@ fn execute(input: &mut Vec<i32>) {
     let mut index: i32 = 0;
 
     loop {
-        // Get opcode, a, b and dest
         let opcode: i32 = input[index as usize];
 
         if opcode == 99 {
