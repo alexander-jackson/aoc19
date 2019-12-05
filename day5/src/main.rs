@@ -178,6 +178,10 @@ fn execute(input: &mut Vec<i32>) {
     let mut index: i32 = 0;
 
     loop {
+        if index as usize >= input.len() {
+            break;
+        }
+
         // Get opcode, a, b and dest
         let opcode: i32 = input[index as usize];
 

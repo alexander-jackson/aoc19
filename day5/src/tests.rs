@@ -58,3 +58,21 @@ fn addition_test() {
 
     assert_eq!(values, format_input("1001,4,66,4,99"));
 }
+
+#[test]
+fn less_than_test() {
+    let mut values: Vec<i32> = format_input("7,1,2,3");
+
+    execute(&mut values);
+
+    assert_eq!(values, format_input("7,1,2,1"));
+}
+
+#[test]
+fn equals_test() {
+    let mut values: Vec<i32> = format_input("8,1,1,3");
+
+    execute(&mut values);
+
+    assert_eq!(values, format_input("8,1,1,1"));
+}
