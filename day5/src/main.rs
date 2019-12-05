@@ -30,13 +30,13 @@ fn execute(input: &mut Vec<i32>) {
 
         if opcode == 1 {
             input[dest as usize] = input[a as usize] + input[b as usize];
+            index += 4;
         } else if opcode == 2 {
             input[dest as usize] = input[a as usize] * input[b as usize];
+            index += 4;
         } else {
             panic!("Something went wrong");
         }
-
-        index += 4;
     }
 }
 
