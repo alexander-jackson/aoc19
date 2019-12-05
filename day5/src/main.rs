@@ -174,15 +174,11 @@ fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
 
 fn execute(input: &mut Vec<i32>) {
     let mut index: i32 = 0;
+    let mut opcode: i32 = input[index as usize];
 
-    loop {
-        let opcode: i32 = input[index as usize];
-
-        if opcode == 99 {
-            break;
-        }
-
+    while opcode != 99 {
         perform_opcode(input, &mut index, opcode);
+        opcode = input[index as usize];
     }
 }
 
