@@ -1,5 +1,6 @@
-use std::fs;
 use std::io;
+use std::fs;
+use std::env;
 
 #[derive(Debug, PartialEq)]
 struct Op {
@@ -158,6 +159,8 @@ fn perform_opcode(input: &mut Vec<i32>, index: &mut i32, opcode: i32) {
     // Split the opcode up
     let op: Op = split_opcode(opcode);
 
+    println!("Performing: {:?} at index {}", op, index);
+
     match op.d {
         1 => add_op(input, index, op),
         2 => multiply_op(input, index, op),
@@ -187,68 +190,16 @@ fn execute(input: &mut Vec<i32>) {
 }
 
 fn main() {
-    let filename: &str = "input.txt";
+    let args: Vec<String> = env::args().collect();
+
+    let filename: &str = if args.len() > 1 { &args[1] } else { "input.txt" };
+
+    dbg!(&filename);
 
     let mut values: Vec<i32> = get_values(filename);
 
     execute(&mut values);
 }
 
-#[test]
-fn first_test() {
-    let mut values: Vec<i32> = format_input("1,0,0,0,99");
-
-    execute(&mut values);
-
-    assert_eq!(values, format_input("2,0,0,0,99"));
-}
-
-#[test]
-fn second_test() {
-    let mut values: Vec<i32> = format_input("2,3,0,3,99");
-
-    execute(&mut values);
-
-    assert_eq!(values, format_input("2,3,0,6,99"));
-}
-
-#[test]
-fn third_test() {
-    let mut values: Vec<i32> = format_input("2,4,4,5,99,0");
-
-    execute(&mut values);
-
-    assert_eq!(values, format_input("2,4,4,5,99,9801"));
-}
-
-#[test]
-fn fourth_test() {
-    let mut values: Vec<i32> = format_input("1,1,1,4,99,5,6,0,99");
-
-    execute(&mut values);
-
-    assert_eq!(values, format_input("30,1,1,4,2,5,6,0,99"));
-}
-
-#[test]
-fn split_opcode_test() {
-    assert_eq!(split_opcode(1002), Op { a: 0, b: 1, c: 0, d: 2 });
-}
-
-#[test]
-fn multiplication_test() {
-    let mut values: Vec<i32> = format_input("1002,4,3,4,33");
-
-    execute(&mut values);
-
-    assert_eq!(values, format_input("1002,4,3,4,99"));
-}
-
-#[test]
-fn addition_test() {
-    let mut values: Vec<i32> = format_input("1001,4,66,4,33");
-
-    execute(&mut values);
-
-    assert_eq!(values, format_input("1001,4,66,4,99"));
-}
+#[cfg(test)]
+mod tests;
