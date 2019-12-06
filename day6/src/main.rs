@@ -1,11 +1,8 @@
-use std::collections::HashSet;
 use std::fs;
+use std::collections::HashSet;
+use std::collections::HashMap;
 
-use rayon::prelude::*;
-
-/// AAA)BBB means BBB orbits AAA
-
-fn get_total_orbits(orbits: &Vec<Vec<&str>>, key: &str) -> u32 {
+fn get_total_orbits<'a>(orbits: &Vec<Vec<&'a str>>, total_orbits: &mut HashMap<&'a str, u32>, key: &'a str) -> u32 {
     let mut total: u32 = 0;
     let orbitters = get_direct_orbits(orbits, key);
 
@@ -14,10 +11,17 @@ fn get_total_orbits(orbits: &Vec<Vec<&str>>, key: &str) -> u32 {
     }
 
     for o in &orbitters {
-        total += get_total_orbits(&orbits, o);
+        if total_orbits.contains_key(o) {
+            total += total_orbits.get(o).unwrap();
+        } else {
+            total += get_total_orbits(&orbits, total_orbits, o);
+        }
     }
 
-    total + orbitters.len() as u32
+    let result: u32 = total + orbitters.len() as u32;
+    total_orbits.insert(key, result);
+
+    result
 }
 
 fn get_direct_orbits<'a>(orbits: &Vec<Vec<&'a str>>, key: &str) -> HashSet<&'a str> {
@@ -54,8 +58,10 @@ fn main() {
         keys.insert(o[1]);
     }
 
-    let total: u32 = keys.par_iter().map(|x| {
-        dbg!(x); get_total_orbits(&orbits, x)
+    let mut total_orbits: HashMap<&str, u32> = HashMap::new();
+
+    let total: u32 = keys.iter().map(|x| {
+        dbg!(x); get_total_orbits(&orbits, &mut total_orbits, x)
     }).sum();
 
     dbg!(total);
