@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 use std::fs;
 
+use rayon::prelude::*;
+
 /// AAA)BBB means BBB orbits AAA
 
 fn get_total_orbits(orbits: &Vec<Vec<&str>>, key: &str) -> u32 {
@@ -52,7 +54,7 @@ fn main() {
         keys.insert(o[1]);
     }
 
-    let total: u32 = keys.iter().map(|x| {
+    let total: u32 = keys.par_iter().map(|x| {
         dbg!(x); get_total_orbits(&orbits, x)
     }).sum();
 
